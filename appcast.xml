@@ -3,6 +3,22 @@
     <channel>
         <title>Projo</title>
         <item>
+            <title>0.24</title>
+            <pubDate>Thu, 19 Nov 2026 14:29:23 +0100</pubDate>
+            <sparkle:version>370</sparkle:version>
+            <sparkle:shortVersionString>0.24</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<h2>Projo 0.24</h2>
+<ul>
+  <li>Réglages réorganisés, avec une barre latérale : Compte, Lecture, Téléchargements, Notifications, Catalogue, Bibliothèque, Services, Apparence, puis une section Avancé (Serveurs, Fiches TMDB) et À propos. Ce qu'on utilise souvent est en haut, le technique est regroupé en bas, et chaque réglage peu évident a une courte explication. Aucun réglage n'a changé de valeur.</li>
+  <li>Serveurs : "Tester les serveurs" ne décale plus les boutons. Chaque serveur affiche son état sur une ligne fixe ("Test en cours...", temps de réponse, "Ne répond pas").</li>
+  <li>Image disque : nouvelle fenêtre d'installation, avec Projo et le dossier Applications en grand et une flèche qui montre quoi faire. Les licences et les sources sont rangées dans le dossier "Informations légales".</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/FELTRINCyril/projo-releases/releases/download/v0.24-370/Projo-0.24-370.dmg" length="156680061" type="application/octet-stream" sparkle:edSignature="dYP9jO33g0UrewFtVxLd8yCe/B+nNnpIG3C8PccNkR+BjSDKDaG7CPuLbZ+3sO/mqiF0E7To7N9Bt2tCaUbdBQ=="/>
+        </item>
+        <item>
             <title>0.23</title>
             <pubDate>Wed, 18 Nov 2026 17:17:39 +0100</pubDate>
             <sparkle:version>357</sparkle:version>
