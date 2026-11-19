@@ -1,40 +1,69 @@
 # Projo
 
-Lecteur IPTV pour macOS 26 (Mac Apple Silicon), avec une interface façon Netflix, pour un
-abonnement Xtream Codes. Ce dépôt sert seulement à distribuer l'application : les
-installateurs (DMG) et le flux des mises à jour.
+Projo est un lecteur IPTV natif pour Mac : il range les films, les séries et les chaînes d'un
+abonnement Xtream Codes que vous possédez déjà comme une plateforme de streaming (bandeau,
+rangées d'affiches, fiches, Ma liste, recherche, lecteur complet). Projo ne fournit aucun contenu.
+
+**Site : https://feltrincyril.github.io/projo-releases/**
+
+Ce dépôt sert à distribuer l'application : les images disque (Releases), le flux des mises à
+jour automatiques et le site.
 
 ## Télécharger
 
-Dernière version : [Releases](https://github.com/FELTRINCyril/projo-releases/releases/latest),
-fichier `Projo-<version>-<build>.dmg`.
+[Dernière version](https://github.com/FELTRINCyril/projo-releases/releases/latest), fichier
+`Projo-<version>-<build>.dmg`.
+
+Projo exige macOS 26 et un Mac Apple Silicon (puce M1 ou plus récente).
 
 ## Installer
 
-1. Ouvrez le DMG et faites glisser Projo.app sur le dossier Applications.
-2. Éjectez l'image disque.
+1. Ouvrez l'image disque téléchargée.
+2. Faites glisser Projo sur le dossier Applications, puis éjectez l'image disque.
+3. À la première ouverture, macOS rappelle que Projo vient d'Internet : cliquez sur "Ouvrir".
 
-## Première ouverture ("Ouvrir quand même")
-
-Projo n'est pas notarisé par Apple : macOS le bloque à la première ouverture. Une seule fois :
-
-1. Essayez d'ouvrir Projo depuis Applications, puis fermez le message.
-2. Ouvrez Réglages Système > Confidentialité et sécurité.
-3. Dans la section Sécurité, cliquez sur "Ouvrir quand même" à côté de Projo, puis confirmez
-   avec votre mot de passe ou Touch ID.
-
-Sur macOS 26, le clic droit > Ouvrir ne suffit plus : passez par les Réglages Système.
+Projo est signé par son développeur et validé par Apple (notarisé) : aucun réglage de sécurité
+à modifier.
 
 ## Mises à jour
 
-Projo vérifie au lancement, puis une fois par jour, s'il existe une nouvelle version (le fichier
-`appcast.xml` de ce dépôt, servi par GitHub Pages). Un bandeau "Nouvelle version disponible"
-s'affiche alors en haut de la fenêtre : "Mettre à jour" ouvre la fenêtre de mise à jour, avec les
-notes de version et le bouton "Installer". Les mises à jour sont signées (EdDSA) et vérifiées
-avant l'installation. La vérification automatique se règle dans Réglages > À propos.
+Projo vérifie au lancement, puis une fois par jour, s'il existe une nouvelle version. Un bandeau
+"Nouvelle version disponible" s'affiche alors en haut de la fenêtre : "Mettre à jour" montre les
+notes de version et installe la mise à jour. Chaque mise à jour est signée et vérifiée avant
+son installation. Réglages > À propos permet de lancer une recherche ou de couper la
+vérification automatique.
+
+Vous avez la 0.22 ou une version plus ancienne : elle ne sait pas se mettre à jour seule.
+Installez une fois la dernière version à sa place ; votre compte, Ma liste et votre progression
+sont gardés.
+
+## Retours
+
+Les retours passent par les issues de ce dépôt :
+
+- [Signaler un problème](https://github.com/FELTRINCyril/projo-releases/issues/new?template=probleme.yml)
+- [Proposer une idée ou une amélioration](https://github.com/FELTRINCyril/projo-releases/issues/new?template=idee.yml)
+- [Poser une question](https://github.com/FELTRINCyril/projo-releases/issues/new?template=question.yml)
+
+**Les issues sont publiques.** N'y mettez jamais d'identifiant, de mot de passe, d'adresse de
+serveur ni de lien M3U, même dans une capture d'écran.
 
 ## Licences et sources
 
-Projo utilise mpv et FFmpeg (LGPL). Chaque DMG contient un dossier "Licences et sources" : les
-licences des composants, les sources des bibliothèques utilisées et `COMPILER.md`, qui explique
-comment recompiler Projo avec une version modifiée de ces bibliothèques.
+Projo utilise mpv et FFmpeg, sous licence LGPL. L'image disque contient un dossier
+"Informations légales" (depuis la 0.24) avec :
+
+- "Licences et sources" : les licences des composants, les sources des bibliothèques utilisées
+  et de quoi relier Projo avec une version modifiée de ces bibliothèques ;
+- `LISEZMOI.txt`, qui décrit ce dossier.
+
+Projo n'est affilié à aucun service de streaming ni à aucun fournisseur IPTV.
+
+## Contenu du dépôt
+
+| Fichier | Rôle |
+|---|---|
+| `appcast.xml` | Flux des mises à jour automatiques, lu par Projo. Écrit par le script de publication. |
+| `Projo-<version>-<build>.html` | Notes de chaque version, affichées dans la fenêtre de mise à jour. |
+| `index.html`, `assets/` | Le site (GitHub Pages, branche `main`, racine). |
+| `.github/ISSUE_TEMPLATE/` | Formulaires des issues. |

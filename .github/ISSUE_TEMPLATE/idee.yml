@@ -1,0 +1,44 @@
+name: Proposer une idée ou une amélioration
+description: Une fonction qui manque, quelque chose à rendre plus simple.
+title: "[Idée] "
+labels: ["idee"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!WARNING]
+        > **Ce message sera public.** Tout le monde peut lire les issues de ce dépôt.
+        > N'y collez **jamais** d'identifiant, de mot de passe, d'adresse de serveur ni de lien M3U.
+
+  - type: textarea
+    id: idee
+    attributes:
+      label: Votre idée
+      description: Ce que vous aimeriez pouvoir faire dans Projo.
+    validations:
+      required: true
+
+  - type: textarea
+    id: pourquoi
+    attributes:
+      label: Pourquoi
+      description: Dans quelle situation cela vous servirait, et comment vous faites aujourd'hui.
+    validations:
+      required: false
+
+  - type: input
+    id: version-projo
+    attributes:
+      label: Version de Projo (facultatif)
+      description: Dans Projo, Réglages > À propos.
+      placeholder: "0.24 (370)"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confidentialite
+    attributes:
+      label: Confidentialité
+      options:
+        - label: Je n'ai mis aucun identifiant ni adresse de serveur dans ce message.
+          required: true

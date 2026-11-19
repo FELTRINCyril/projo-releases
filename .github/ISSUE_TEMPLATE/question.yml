@@ -1,0 +1,46 @@
+name: Poser une question
+description: Une question sur l'installation ou l'utilisation de Projo.
+title: "[Question] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!WARNING]
+        > **Ce message sera public.** Tout le monde peut lire les issues de ce dépôt.
+        > N'y collez **jamais** d'identifiant, de mot de passe, d'adresse de serveur ni de lien M3U.
+
+        Avant de demander, la réponse est peut-être déjà dans les
+        [questions fréquentes du site](https://feltrincyril.github.io/projo-releases/#questions).
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Votre question
+    validations:
+      required: true
+
+  - type: input
+    id: version-projo
+    attributes:
+      label: Version de Projo (facultatif)
+      description: Dans Projo, Réglages > À propos.
+      placeholder: "0.24 (370)"
+    validations:
+      required: false
+
+  - type: input
+    id: version-macos
+    attributes:
+      label: Version de macOS (facultatif)
+      placeholder: "macOS 26.1"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confidentialite
+    attributes:
+      label: Confidentialité
+      options:
+        - label: Je n'ai mis aucun identifiant ni adresse de serveur dans ce message.
+          required: true

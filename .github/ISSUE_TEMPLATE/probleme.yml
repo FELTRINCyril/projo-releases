@@ -1,0 +1,82 @@
+name: Signaler un problème
+description: Quelque chose ne fonctionne pas comme prévu dans Projo.
+title: "[Problème] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!WARNING]
+        > **Ce message sera public.** Tout le monde peut lire les issues de ce dépôt.
+        > N'y collez **jamais** d'identifiant, de mot de passe, d'adresse de serveur ni de lien M3U,
+        > même dans une capture d'écran ou un extrait de journal. Masquez-les avant d'envoyer.
+
+  - type: input
+    id: version-projo
+    attributes:
+      label: Version de Projo
+      description: Dans Projo, Réglages > À propos.
+      placeholder: "0.24 (370)"
+    validations:
+      required: true
+
+  - type: input
+    id: version-macos
+    attributes:
+      label: Version de macOS
+      description: Menu Pomme > À propos de ce Mac.
+      placeholder: "macOS 26.1"
+    validations:
+      required: true
+
+  - type: input
+    id: modele-mac
+    attributes:
+      label: Modèle de Mac
+      description: Menu Pomme > À propos de ce Mac.
+      placeholder: "MacBook Air M2, 2022"
+    validations:
+      required: false
+
+  - type: textarea
+    id: ce-qui-sest-passe
+    attributes:
+      label: Ce qui s'est passé
+      description: Décrivez le problème, et le message d'erreur exact s'il y en a un.
+    validations:
+      required: true
+
+  - type: textarea
+    id: attendu
+    attributes:
+      label: Ce qui était attendu
+    validations:
+      required: true
+
+  - type: textarea
+    id: etapes
+    attributes:
+      label: Étapes pour reproduire
+      description: Si vous savez comment faire réapparaître le problème.
+      placeholder: |
+        1. Ouvrir une fiche de série
+        2. Choisir la saison 2
+        3. ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: captures
+    attributes:
+      label: Captures d'écran (facultatif)
+      description: Glissez vos images ici. Vérifiez d'abord qu'aucune adresse de serveur ni aucun identifiant n'y apparaît.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confidentialite
+    attributes:
+      label: Confidentialité
+      options:
+        - label: Je n'ai mis aucun identifiant ni adresse de serveur dans ce message.
+          required: true
