@@ -125,8 +125,63 @@
     });
   }
 
+  // ===== Every release (versions page and feedback form) =================
+  var RELEASES = "https://api.github.com/repos/" + REPO + "/releases?per_page=100";
+  var RELEASES_KEY = "projo-releases-v1";
+
+  function parseVersion(tag) {
+    var m = /^v?(\d+(?:\.\d+)*)(?:-(\d+))?$/.exec(tag || "");
+    return m ? { version: m[1], build: m[2] || "" } : null;
+  }
+
+  // Newest first, by version number then build (publication dates are not
+  // in order: 0.21 and 0.22 were published after 0.23).
+  function compareVersions(a, b) {
+    var x = a.version.split(".").map(Number);
+    var y = b.version.split(".").map(Number);
+    for (var i = 0; i < Math.max(x.length, y.length); i++) {
+      var d = (y[i] || 0) - (x[i] || 0);
+      if (d) return d;
+    }
+    return (Number(b.build) || 0) - (Number(a.build) || 0);
+  }
+
+  function shapeReleases(json) {
+    if (!Array.isArray(json)) throw new Error("GitHub API: unexpected list");
+    return json.filter(function (r) { return !r.draft && !r.prerelease; }).map(function (r) {
+      var v = parseVersion(r.tag_name);
+      if (!v) return null;
+      var asset = (r.assets || []).filter(function (a) { return DMG.test(a.name) && TRUSTED.test(a.browser_download_url); })[0];
+      return {
+        version: v.version,
+        build: v.build,
+        date: r.published_at,
+        body: typeof r.body === "string" ? r.body : "",
+        dmg: asset ? { url: asset.browser_download_url, size: asset.size, name: asset.name } : null
+      };
+    }).filter(Boolean).sort(compareVersions);
+  }
+
+  var releasesPromise = null;
+  function loadReleases() {
+    if (releasesPromise) return releasesPromise;
+    try {
+      var data = JSON.parse(window.localStorage.getItem(RELEASES_KEY) || "null");
+      if (data && Date.now() - data.at < CACHE_MS && Array.isArray(data.list)) {
+        releasesPromise = Promise.resolve(data.list);
+        return releasesPromise;
+      }
+    } catch (e) { /* no cache */ }
+    releasesPromise = githubJSON(RELEASES).then(shapeReleases).then(function (list) {
+      try { window.localStorage.setItem(RELEASES_KEY, JSON.stringify({ at: Date.now(), list: list })); } catch (e) { /* no cache */ }
+      return list;
+    });
+    releasesPromise.catch(function () { releasesPromise = null; }); // retry on next use
+    return releasesPromise;
+  }
+
   // For versions.js (same origin, loaded after this file).
-  window.Projo = { githubJSON: githubJSON, megabytes: megabytes, DMG: DMG, TRUSTED: TRUSTED, notMac: notMac, REPO: REPO };
+  window.Projo = { loadReleases: loadReleases, megabytes: megabytes, notMac: notMac, REPO: REPO };
 
   // ===== FAQ accordion: one answer open at a time =========================
   var questions = [];
@@ -151,9 +206,39 @@
   // ===== Feedback form (dialog) ===========================================
   // The site cannot create a GitHub issue by itself: that needs a signed-in
   // GitHub account (a static page cannot hold a secret token). The visitor
-  // fills the form here, then GitHub opens the matching issue form with every
-  // field already filled in (query parameters named after the field ids of
-  // .github/ISSUE_TEMPLATE/*.yml), and the visitor only has to submit it.
+  // fills the form here, then GitHub opens the new issue already filled in.
+
+  // macOS and iOS versions offered in the lists, newest first. Source: Apple
+  // security releases (support.apple.com/en-us/100100), read on 20/11/2026.
+  // Projo needs macOS 26 or iOS 26. Add each new release at the top of its
+  // group; a new major version gets a new group on top.
+  var SYSTEMS = {
+    mac: [
+      { label: "macOS 27 Golden Gate", versions: ["27.2.1", "27.2", "27.0.1", "27"] },
+      { label: "macOS 26 Tahoe", versions: ["26.7.3", "26.7.2", "26.7.1", "26.7", "26.6.2", "26.6.1", "26.6", "26.5.2", "26.5.1", "26.5", "26.4.1", "26.4", "26.3.2", "26.3.1", "26.3", "26.2", "26.1", "26.0.1", "26"] }
+    ],
+    iphone: [
+      { label: "iOS 27", versions: ["27.2.1", "27.2", "27.1", "27.0.1", "27"] },
+      { label: "iOS 26", versions: ["26.7.3", "26.7.2", "26.7.1", "26.7", "26.6.2", "26.6.1", "26.6", "26.5.2", "26.5.1", "26.5", "26.4.2", "26.4.1", "26.4", "26.3.1", "26.3", "26.2.1", "26.2", "26.1", "26.0.1", "26"] }
+    ]
+  };
+
+  // Texts that depend on the device the message is about.
+  var DEVICES = {
+    mac: {
+      name: "Mac", system: "macOS",
+      systemLabel: "Version de macOS", systemHint: "Menu Pomme > À propos de ce Mac.",
+      modelLabel: "Modèle de Mac", modelHint: "Menu Pomme > À propos de ce Mac.", modelPlaceholder: "MacBook Air M2, 2022"
+    },
+    iphone: {
+      name: "iPhone", system: "iOS",
+      systemLabel: "Version d'iOS", systemHint: "Réglages > Général > Informations.",
+      modelLabel: "Modèle d'iPhone", modelHint: "Réglages > Général > Informations > Nom du modèle.", modelPlaceholder: "iPhone 16"
+    }
+  };
+
+  // Field ids are those of .github/ISSUE_TEMPLATE/*.yml: GitHub fills its
+  // issue form from query parameters named after them.
   var FORMS = {
     probleme: {
       title: "Signaler un problème",
@@ -161,12 +246,12 @@
       prefix: "[Problème] ",
       fields: [
         { id: "title", label: "En une phrase", required: true, placeholder: "La lecture s'arrête après quelques secondes" },
-        { id: "version-projo", label: "Version de Projo", hint: "Dans Projo, Réglages > À propos.", required: true, placeholder: "0.24 (370)", latest: true },
-        { id: "version-macos", label: "Version de macOS", hint: "Menu Pomme > À propos de ce Mac.", required: true, placeholder: "macOS 26.1" },
-        { id: "modele-mac", label: "Modèle de Mac (facultatif)", placeholder: "MacBook Air M2, 2022" },
+        { id: "version-projo", type: "projo", label: "Version de Projo", hint: "Dans Projo, Réglages > À propos." },
+        { id: "version-systeme", type: "system" },
+        { id: "modele", type: "model" },
         { id: "ce-qui-sest-passe", label: "Ce qui s'est passé", hint: "Et le message d'erreur exact s'il y en a un.", required: true, area: true },
         { id: "attendu", label: "Ce qui était attendu", required: true, area: true },
-        { id: "etapes", label: "Étapes pour reproduire (facultatif)", area: true, placeholder: "1. Ouvrir une fiche de série\n2. Choisir la saison 2\n3. ..." }
+        { id: "etapes", label: "Étapes pour reproduire (facultatif)", area: true, placeholder: "1. Ouvrir une fiche de série\n2. Choisir la saison 2\n3. Lancer un épisode" }
       ],
       after: "Vous pourrez ajouter des captures d'écran sur GitHub, avant d'envoyer."
     },
@@ -178,7 +263,7 @@
         { id: "title", label: "En une phrase", required: true, placeholder: "Pouvoir trier Ma liste par date d'ajout" },
         { id: "idee", label: "Votre idée", hint: "Ce que vous aimeriez pouvoir faire dans Projo.", required: true, area: true },
         { id: "pourquoi", label: "Pourquoi (facultatif)", hint: "Dans quelle situation cela vous servirait.", area: true },
-        { id: "version-projo", label: "Version de Projo (facultatif)", placeholder: "0.24 (370)", latest: true }
+        { id: "version-projo", type: "projo", label: "Version de Projo", hint: "Dans Projo, Réglages > À propos." }
       ]
     },
     question: {
@@ -188,11 +273,14 @@
       fields: [
         { id: "title", label: "En une phrase", required: true, placeholder: "Comment changer de serveur ?" },
         { id: "question", label: "Votre question", required: true, area: true },
-        { id: "version-projo", label: "Version de Projo (facultatif)", placeholder: "0.24 (370)", latest: true },
-        { id: "version-macos", label: "Version de macOS (facultatif)", placeholder: "macOS 26.1" }
+        { id: "version-projo", type: "projo", label: "Version de Projo", hint: "Dans Projo, Réglages > À propos." },
+        { id: "version-systeme", type: "system" }
       ]
     }
   };
+  var UNKNOWN_PROJO = "Je ne sais pas";
+  var OTHER_SYSTEM = "Autre version";
+
   // Measured on 20/11/2026: a signed-out visitor goes through the login page,
   // which re-encodes the URL in return_to. Up to 4500 characters it is kept;
   // from about 5000 GitHub fails (500), then drops return_to and the message
@@ -216,11 +304,18 @@
     return node;
   }
 
+  function option(value, text) {
+    var o = el("option", null, text || value);
+    o.value = value;
+    return o;
+  }
+
   var dialog = null;
   var opener = null;
 
   function buildDialog(kind) {
     var conf = FORMS[kind];
+    var state = { device: "mac" };
     var d = el("dialog", { class: "fb", "aria-labelledby": "fb-heading" });
     var form = el("form", { class: "fb-form", novalidate: "" });
     var head = el("div", { class: "fb-head" });
@@ -237,21 +332,71 @@
     warn.appendChild(document.createTextNode("Tout le monde peut lire les issues de Projo sur GitHub. N'y mettez jamais d'identifiant, de mot de passe, d'adresse de serveur ni de lien M3U."));
     form.appendChild(warn);
 
+    // Device switch: Mac or iPhone. Radio buttons, shown as a segmented control.
+    var devices = el("fieldset", { class: "fb-device" });
+    devices.appendChild(el("legend", null, "Appareil"));
+    var seg = el("div", { class: "fb-seg" });
+    Object.keys(DEVICES).forEach(function (key) {
+      var radio = el("input", { type: "radio", name: "appareil", id: "fb-dev-" + key, value: key });
+      if (key === state.device) radio.checked = true;
+      radio.addEventListener("change", function () { if (radio.checked) applyDevice(key); });
+      seg.appendChild(radio);
+      seg.appendChild(el("label", { for: "fb-dev-" + key }, DEVICES[key].name));
+    });
+    devices.appendChild(seg);
+    form.appendChild(devices);
+
+    var dynamic = []; // fields whose texts follow the device
     conf.fields.forEach(function (f) {
       var wrap = el("div", { class: "fb-field" });
       var inputId = "fb-" + f.id;
-      wrap.appendChild(el("label", { for: inputId }, f.label));
-      if (f.hint) wrap.appendChild(el("p", { class: "fb-hint", id: inputId + "-hint" }, f.hint));
-      var input = el(f.area ? "textarea" : "input", { id: inputId, name: f.id, maxlength: f.area ? "2000" : "140" });
-      if (!f.area) { input.type = "text"; input.setAttribute("autocomplete", "off"); }
-      else input.rows = 4;
-      if (f.placeholder) input.placeholder = f.placeholder;
-      if (f.required) input.required = true;
-      if (f.hint) input.setAttribute("aria-describedby", inputId + "-hint");
-      if (f.latest) input.setAttribute("data-latest", "");
+      var label = el("label", { for: inputId }, f.label || "");
+      var hint = el("p", { class: "fb-hint", id: inputId + "-hint" }, f.hint || "");
+      var input;
+      if (f.type === "projo") {
+        input = el("select", { id: inputId, name: f.id, disabled: "" });
+        input.appendChild(option("", "Chargement des versions..."));
+        fillProjoVersions(input, wrap);
+      } else if (f.type === "system") {
+        input = el("select", { id: inputId, name: f.id });
+      } else {
+        input = el(f.area ? "textarea" : "input", { id: inputId, name: f.id, maxlength: f.area ? "2000" : "140" });
+        if (f.area) input.rows = 4;
+        else { input.type = "text"; input.setAttribute("autocomplete", "off"); }
+        if (f.placeholder) input.placeholder = f.placeholder;
+        if (f.required) input.required = true;
+      }
+      input.setAttribute("aria-describedby", inputId + "-hint");
+      wrap.appendChild(label);
+      wrap.appendChild(hint);
       wrap.appendChild(input);
       form.appendChild(wrap);
+      if (f.type === "system" || f.type === "model") dynamic.push({ f: f, label: label, hint: hint, input: input });
     });
+
+    function applyDevice(key) {
+      state.device = key;
+      var dev = DEVICES[key];
+      dynamic.forEach(function (item) {
+        if (item.f.type === "system") {
+          item.label.textContent = dev.systemLabel;
+          item.hint.textContent = dev.systemHint;
+          item.input.textContent = "";
+          SYSTEMS[key].forEach(function (group) {
+            var g = el("optgroup", { label: group.label });
+            group.versions.forEach(function (v) { g.appendChild(option(dev.system + " " + v)); });
+            item.input.appendChild(g);
+          });
+          item.input.appendChild(option(OTHER_SYSTEM));
+          item.input.selectedIndex = 0; // newest version by default
+        } else {
+          item.label.textContent = dev.modelLabel + " (facultatif)";
+          item.hint.textContent = dev.modelHint;
+          item.input.placeholder = dev.modelPlaceholder;
+        }
+      });
+    }
+    applyDevice(state.device);
 
     var consent = el("div", { class: "fb-consent" });
     var box = el("input", { type: "checkbox", id: "fb-consent", required: "" });
@@ -265,8 +410,19 @@
 
     var foot = el("div", { class: "fb-foot" });
     foot.appendChild(el("p", { class: "fb-note" }, "GitHub ouvre ensuite votre message, déjà rempli : relisez-le, cochez à nouveau la case de confidentialité, puis envoyez. Un compte GitHub gratuit est nécessaire." + (conf.after ? " " + conf.after : "")));
-    foot.appendChild(el("button", { type: "submit", class: "btn btn-primary fb-submit" }, "Continuer sur GitHub"));
+    var submit = el("button", { type: "submit", class: "btn btn-primary fb-submit", "aria-describedby": "fb-submit-why" }, "Continuer sur GitHub");
+    foot.appendChild(submit);
+    var why = el("p", { class: "fb-why", id: "fb-submit-why" }, "Cochez la case de confidentialité pour continuer.");
+    foot.appendChild(why);
     form.appendChild(foot);
+
+    // The consent box is mandatory: the button stays greyed out until it is ticked.
+    function syncSubmit() {
+      submit.disabled = !box.checked;
+      why.hidden = box.checked;
+    }
+    box.addEventListener("change", syncSubmit);
+    syncSubmit();
 
     // Any edit clears the previous error: it described the old content.
     form.addEventListener("input", function () { error.hidden = true; });
@@ -274,7 +430,7 @@
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
-      var problem = validate(form, conf);
+      var problem = validate(form, conf, box);
       if (problem) {
         error.textContent = problem.message;
         error.hidden = false;
@@ -282,7 +438,7 @@
         return;
       }
       error.hidden = true;
-      var url = issueURL(kind, form, conf);
+      var url = issueURL(kind, form, conf, state.device);
       if (url.length > MAX_URL) {
         // Share of the text to remove: the URL grows in proportion to the text
         // (each field is sent twice, accents take 6 characters once encoded).
@@ -304,22 +460,44 @@
     return d;
   }
 
-  function validate(form, conf) {
+  // Every published version of Projo, newest selected. If the list cannot be
+  // read (API limit, offline), the field becomes a plain text field.
+  function fillProjoVersions(select, wrap) {
+    loadReleases().then(function (list) {
+      if (!list.length) throw new Error("no release");
+      select.textContent = "";
+      var latest = list.filter(function (r) { return r.dmg; })[0] || list[0];
+      list.forEach(function (r) {
+        var value = r.version + (r.build ? " (" + r.build + ")" : "");
+        select.appendChild(option(value, value + (r === latest ? " - dernière version" : "")));
+      });
+      select.appendChild(option(UNKNOWN_PROJO));
+      select.selectedIndex = list.indexOf(latest);
+      select.disabled = false;
+    }).catch(function () {
+      var input = el("input", { type: "text", id: select.id, name: select.name, maxlength: "40", autocomplete: "off", placeholder: "0.24 (370)" });
+      input.setAttribute("aria-describedby", select.getAttribute("aria-describedby") || "");
+      if (wrap.contains(select)) wrap.replaceChild(input, select);
+    });
+  }
+
+  function validate(form, conf, box) {
     for (var i = 0; i < conf.fields.length; i++) {
       var f = conf.fields[i];
       var input = form.elements[f.id];
+      if (!input || input.tagName === "SELECT") continue;
       var value = input.value.trim();
       if (f.required && !value) {
         return { field: input, message: "Le champ \"" + f.label + "\" est obligatoire." };
       }
       for (var j = 0; j < SENSITIVE.length; j++) {
         if (SENSITIVE[j].re.test(value)) {
-          return { field: input, message: "Le champ \"" + f.label + "\" semble contenir " + SENSITIVE[j].why + ". Retirez-le : ce message sera public." };
+          var name = form.querySelector("label[for='" + input.id + "']").textContent;
+          return { field: input, message: "Le champ \"" + name + "\" semble contenir " + SENSITIVE[j].why + ". Retirez-le : ce message sera public." };
         }
       }
     }
-    var consent = form.querySelector("#fb-consent");
-    if (!consent.checked) return { field: consent, message: "Cochez la case de confidentialité pour continuer." };
+    if (!box.checked) return { field: box, message: "Cochez la case de confidentialité pour continuer." };
     return null;
   }
 
@@ -329,15 +507,21 @@
   // - "body": the whole message as Markdown, in the layout GitHub gives to an
   //   issue form answer. GitHub uses it when it shows the plain issue editor
   //   (template not on the default branch yet), so nothing is ever lost.
-  function issueURL(kind, form, conf) {
+  function issueURL(kind, form, conf, device) {
     var params = ["template=" + encodeURIComponent(kind + ".yml")];
     var body = [];
+    function add(id, label, value) {
+      params.push(encodeURIComponent(id) + "=" + encodeURIComponent(value));
+      if (label) body.push("### " + label + "\n\n" + value);
+    }
+    add("appareil", "Appareil", DEVICES[device].name);
     conf.fields.forEach(function (f) {
-      var value = form.elements[f.id].value.trim();
+      var input = form.elements[f.id];
+      var value = input ? input.value.trim() : "";
       if (!value) return;
-      if (f.id === "title") value = conf.prefix + value;
-      else body.push("### " + f.label.replace(/ \(facultatif\)$/, "") + "\n\n" + value);
-      params.push(encodeURIComponent(f.id) + "=" + encodeURIComponent(value));
+      if (f.id === "title") { add("title", null, conf.prefix + value); return; }
+      var label = form.querySelector("label[for='" + input.id + "']").textContent.replace(/ \(facultatif\)$/, "");
+      add(f.id, label, value);
     });
     body.push("### Confidentialité\n\n- [x] Je n'ai mis aucun identifiant ni adresse de serveur dans ce message.");
     params.push("body=" + encodeURIComponent(body.join("\n\n")));
@@ -349,15 +533,9 @@
     if (dialog) dialog.remove();
     dialog = buildDialog(kind);
     document.body.appendChild(dialog);
-    var latest = readCache();
-    if (latest) {
-      dialog.querySelectorAll("[data-latest]").forEach(function (input) {
-        input.placeholder = latest.version + " (" + latest.build + ")";
-      });
-    }
     opener = from || null;
     dialog.showModal();
-    var first = dialog.querySelector("input, textarea");
+    var first = dialog.querySelector("#fb-title");
     if (first) first.focus();
     return true;
   }

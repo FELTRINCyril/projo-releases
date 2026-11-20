@@ -10,9 +10,6 @@
   var box = document.querySelector(".js-releases");
   if (!P || !box || !("fetch" in window)) return;
 
-  var LIST = "https://api.github.com/repos/" + P.REPO + "/releases?per_page=100";
-  var CACHE_KEY = "projo-releases-v1";
-  var CACHE_MS = 10 * 60 * 1000;
 
   function el(tag, cls, text) {
     var node = document.createElement(tag);
@@ -87,49 +84,6 @@
     return out;
   }
 
-  // ----- Data
-  function parseVersion(tag) {
-    var m = /^v?(\d+(?:\.\d+)*)(?:-(\d+))?$/.exec(tag || "");
-    return m ? { version: m[1], build: m[2] || "" } : null;
-  }
-
-  function compare(a, b) {
-    var x = a.version.split(".").map(Number);
-    var y = b.version.split(".").map(Number);
-    for (var i = 0; i < Math.max(x.length, y.length); i++) {
-      var d = (y[i] || 0) - (x[i] || 0);
-      if (d) return d;
-    }
-    return (Number(b.build) || 0) - (Number(a.build) || 0);
-  }
-
-  function shape(json) {
-    if (!Array.isArray(json)) throw new Error("GitHub API: unexpected list");
-    return json.filter(function (r) { return !r.draft && !r.prerelease; }).map(function (r) {
-      var v = parseVersion(r.tag_name);
-      if (!v) return null;
-      var asset = (r.assets || []).filter(function (a) { return P.DMG.test(a.name) && P.TRUSTED.test(a.browser_download_url); })[0];
-      return {
-        version: v.version,
-        build: v.build,
-        date: r.published_at,
-        body: typeof r.body === "string" ? r.body : "",
-        dmg: asset ? { url: asset.browser_download_url, size: asset.size, name: asset.name } : null
-      };
-    }).filter(Boolean).sort(compare);
-  }
-
-  function load() {
-    try {
-      var data = JSON.parse(window.localStorage.getItem(CACHE_KEY) || "null");
-      if (data && Date.now() - data.at < CACHE_MS && Array.isArray(data.list)) return Promise.resolve(data.list);
-    } catch (e) { /* no cache */ }
-    return P.githubJSON(LIST).then(shape).then(function (list) {
-      try { window.localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), list: list })); } catch (e) { /* no cache */ }
-      return list;
-    });
-  }
-
   function frenchDate(iso) {
     var d = new Date(iso);
     if (isNaN(d)) return "";
@@ -195,5 +149,5 @@
 
   box.textContent = "";
   box.appendChild(el("p", "releases-status", "Chargement des versions..."));
-  load().then(render).catch(fail);
+  P.loadReleases().then(render).catch(fail);
 })();

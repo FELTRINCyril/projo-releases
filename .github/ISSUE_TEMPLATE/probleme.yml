@@ -11,29 +11,39 @@ body:
         > N'y collez **jamais** d'identifiant, de mot de passe, d'adresse de serveur ni de lien M3U,
         > même dans une capture d'écran ou un extrait de journal. Masquez-les avant d'envoyer.
 
+  - type: dropdown
+    id: appareil
+    attributes:
+      label: Appareil
+      options:
+        - Mac
+        - iPhone
+      default: 0
+    validations:
+      required: true
+
   - type: input
     id: version-projo
     attributes:
       label: Version de Projo
       description: Dans Projo, Réglages > À propos.
-      placeholder: "0.24 (370)"
+      placeholder: "0.24"
     validations:
       required: true
 
   - type: input
-    id: version-macos
+    id: version-systeme
     attributes:
-      label: Version de macOS
-      description: Menu Pomme > À propos de ce Mac.
-      placeholder: "macOS 26.1"
+      label: Version de macOS ou d'iOS
+      description: "Mac : menu Pomme > À propos de ce Mac. iPhone : Réglages > Général > Informations."
+      placeholder: "macOS 27.2.1"
     validations:
       required: true
 
   - type: input
-    id: modele-mac
+    id: modele
     attributes:
-      label: Modèle de Mac
-      description: Menu Pomme > À propos de ce Mac.
+      label: Modèle de Mac ou d'iPhone
       placeholder: "MacBook Air M2, 2022"
     validations:
       required: false

@@ -20,20 +20,31 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: appareil
+    attributes:
+      label: Appareil
+      options:
+        - Mac
+        - iPhone
+      default: 0
+    validations:
+      required: true
+
   - type: input
     id: version-projo
     attributes:
       label: Version de Projo (facultatif)
       description: Dans Projo, Réglages > À propos.
-      placeholder: "0.24 (370)"
+      placeholder: "0.24"
     validations:
       required: false
 
   - type: input
-    id: version-macos
+    id: version-systeme
     attributes:
-      label: Version de macOS (facultatif)
-      placeholder: "macOS 26.1"
+      label: Version de macOS ou d'iOS (facultatif)
+      placeholder: "macOS 27.2.1"
     validations:
       required: false
 

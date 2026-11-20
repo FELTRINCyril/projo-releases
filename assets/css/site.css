@@ -1082,7 +1082,7 @@ ul, ol { padding: 0; list-style: none; }
 .fb-field { display: grid; gap: 6px; }
 .fb-field label { font-size: 15px; font-weight: 600; }
 .fb-hint { font-size: 13px; color: var(--text-2); margin-top: -2px; }
-.fb-field input, .fb-field textarea {
+.fb-field input, .fb-field textarea, .fb-field select {
   width: 100%;
   font: inherit;
   font-size: 16px; /* 16 px: no zoom on focus in iOS Safari */
@@ -1094,7 +1094,7 @@ ul, ol { padding: 0; list-style: none; }
   resize: vertical;
 }
 .fb-field input::placeholder, .fb-field textarea::placeholder { color: #6e6e73; }
-.fb-field input:focus-visible, .fb-field textarea:focus-visible { outline: 3px solid #fff; outline-offset: 1px; border-color: transparent; }
+.fb-field input:focus-visible, .fb-field textarea:focus-visible, .fb-field select:focus-visible { outline: 3px solid #fff; outline-offset: 1px; border-color: transparent; }
 .fb-consent { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; }
 .fb-consent input { flex: none; width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--red); }
 .fb-error {
@@ -1106,6 +1106,55 @@ ul, ol { padding: 0; list-style: none; }
 .fb-note { font-size: 14px; color: var(--text-2); }
 .fb-submit { font-size: 17px; padding: 12px 24px; }
 button.btn { border: 0; cursor: pointer; font-family: inherit; }
+.btn:disabled, .btn:disabled:hover {
+  background: #3a3a3c;
+  color: #8e8e93;
+  cursor: not-allowed;
+  transform: none;
+}
+.fb-why { font-size: 13px; color: var(--text-2); margin-top: -8px; }
+
+/* Native select with our own arrow (the system one is invisible on black). */
+.fb-field select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23a1a1a6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px 8px;
+  cursor: pointer;
+}
+.fb-field select:disabled { color: var(--text-2); cursor: progress; }
+.fb-field select option, .fb-field select optgroup { background: #1d1d1f; color: var(--text); }
+
+/* Mac / iPhone switch: two radio buttons drawn as a segmented control. */
+.fb-device { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 8px; }
+.fb-device legend { padding: 0; margin-bottom: 8px; font-size: 15px; font-weight: 600; }
+.fb-seg {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  justify-self: start;
+  min-width: 220px;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--black);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.fb-seg input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
+.fb-seg label {
+  text-align: center;
+  padding: 8px 18px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.fb-seg input:checked + label { background: var(--surface-2); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); }
+.fb-seg input:focus-visible + label { outline: 3px solid #fff; outline-offset: 1px; }
 
 /* ===== VERSIONS PAGE =================================================== */
 
