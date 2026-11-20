@@ -65,5 +65,5 @@ Projo n'est affilié à aucun service de streaming ni à aucun fournisseur IPTV.
 |---|---|
 | `appcast.xml` | Flux des mises à jour automatiques, lu par Projo. Écrit par le script de publication. |
 | `Projo-<version>-<build>.html` | Notes de chaque version, affichées dans la fenêtre de mise à jour. |
-| `index.html`, `assets/` | Le site (GitHub Pages, branche `main`, racine). |
+| `index.html`, `versions.html`, `assets/` | Le site (GitHub Pages, branche `main`, racine) et sa page des versions. |
 | `.github/ISSUE_TEMPLATE/` | Formulaires des issues. |
