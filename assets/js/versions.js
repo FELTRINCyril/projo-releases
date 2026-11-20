@@ -10,7 +10,6 @@
   var box = document.querySelector(".js-releases");
   if (!P || !box || !("fetch" in window)) return;
 
-
   function el(tag, cls, text) {
     var node = document.createElement(tag);
     if (cls) node.className = cls;
@@ -129,10 +128,12 @@
       }
       box.appendChild(art);
     });
-    box.setAttribute("aria-busy", "false");
     // The notes arrive after the first paint: honour #v0.24 links now.
-    var target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    var id = location.hash.slice(1);
+    try { id = decodeURIComponent(id); } catch (e) { /* malformed anchor: use it as is */ }
+    var target = id && document.getElementById(id);
     if (target) target.scrollIntoView();
+    status.textContent = list.length + " versions chargées.";
   }
 
   function fail(error) {
@@ -143,10 +144,14 @@
     p.appendChild(a);
     p.appendChild(document.createTextNode("."));
     box.appendChild(p);
-    box.setAttribute("aria-busy", "false");
+    status.textContent = "La liste des versions n'a pas pu être chargée.";
     if (window.console) console.info("Projo: releases not loaded.", error && error.message);
   }
 
+  // Screen readers hear this short status, not the whole list of notes.
+  var status = el("p", "visually-hidden");
+  status.setAttribute("role", "status");
+  box.parentNode.insertBefore(status, box);
   box.textContent = "";
   box.appendChild(el("p", "releases-status", "Chargement des versions..."));
   P.loadReleases().then(render).catch(fail);

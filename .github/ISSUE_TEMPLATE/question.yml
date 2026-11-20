@@ -27,7 +27,6 @@ body:
       options:
         - Mac
         - iPhone
-      default: 0
     validations:
       required: true
 

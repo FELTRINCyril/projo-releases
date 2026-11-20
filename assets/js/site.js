@@ -151,7 +151,7 @@
     return json.filter(function (r) { return !r.draft && !r.prerelease; }).map(function (r) {
       var v = parseVersion(r.tag_name);
       if (!v) return null;
-      var asset = (r.assets || []).filter(function (a) { return DMG.test(a.name) && TRUSTED.test(a.browser_download_url); })[0];
+      var asset = (r.assets || []).filter(function (a) { return DMG.test(a.name) && TRUSTED.test(a.browser_download_url) && typeof a.size === "number"; })[0];
       return {
         version: v.version,
         build: v.build,
@@ -162,12 +162,17 @@
     }).filter(Boolean).sort(compareVersions);
   }
 
+  function validRelease(r) {
+    return !!r && typeof r.version === "string" && typeof r.body === "string" &&
+      (r.dmg === null || (TRUSTED.test(r.dmg.url) && typeof r.dmg.size === "number" && isFinite(r.dmg.size)));
+  }
+
   var releasesPromise = null;
   function loadReleases() {
     if (releasesPromise) return releasesPromise;
     try {
       var data = JSON.parse(window.localStorage.getItem(RELEASES_KEY) || "null");
-      if (data && Date.now() - data.at < CACHE_MS && Array.isArray(data.list)) {
+      if (data && Date.now() - data.at < CACHE_MS && Array.isArray(data.list) && data.list.every(validRelease)) {
         releasesPromise = Promise.resolve(data.list);
         return releasesPromise;
       }
@@ -246,7 +251,7 @@
       prefix: "[Problème] ",
       fields: [
         { id: "title", label: "En une phrase", required: true, placeholder: "La lecture s'arrête après quelques secondes" },
-        { id: "version-projo", type: "projo", label: "Version de Projo", hint: "Dans Projo, Réglages > À propos." },
+        { id: "version-projo", type: "projo", label: "Version de Projo", hint: "Dans Projo, Réglages > À propos.", required: true },
         { id: "version-systeme", type: "system" },
         { id: "modele", type: "model" },
         { id: "ce-qui-sest-passe", label: "Ce qui s'est passé", hint: "Et le message d'erreur exact s'il y en a un.", required: true, area: true },
@@ -356,7 +361,7 @@
       if (f.type === "projo") {
         input = el("select", { id: inputId, name: f.id, disabled: "" });
         input.appendChild(option("", "Chargement des versions..."));
-        fillProjoVersions(input, wrap);
+        fillProjoVersions(input, wrap, f.required);
       } else if (f.type === "system") {
         input = el("select", { id: inputId, name: f.id });
       } else {
@@ -440,29 +445,62 @@
       error.hidden = true;
       var url = issueURL(kind, form, conf, state.device);
       if (url.length > MAX_URL) {
-        // Share of the text to remove: the URL grows in proportion to the text
-        // (each field is sent twice, accents take 6 characters once encoded).
-        var excess = Math.min(95, Math.max(5, Math.ceil((url.length - MAX_URL) / url.length * 100 / 5) * 5));
+        // Share of the typed text to remove. Only the part of the URL that
+        // comes from the text fields shrinks when the text does (each field
+        // is sent twice, an accent takes 6 characters once encoded).
+        var fixed = issueURL(kind, form, conf, state.device, true).length;
+        var excess = Math.min(95, Math.max(5, Math.ceil((url.length - MAX_URL) / Math.max(1, url.length - fixed) * 100 / 5) * 5));
         error.textContent = "Le message est trop long pour être transmis à GitHub : raccourcissez-le d'environ " + excess + " %.";
         error.hidden = false;
         return;
       }
       window.open(url, "_blank", "noopener");
-      d.close();
+      // A blocked pop-up cannot be detected (noopener returns null): keep the
+      // message, and give a link to open GitHub by hand.
+      showReady(url);
     });
 
+    var ready = el("div", { class: "fb-ready" });
+    ready.hidden = true;
+    ready.appendChild(el("h2", { id: "fb-ready-title", tabindex: "-1" }, "Votre message est prêt"));
+    ready.appendChild(el("p", null, "GitHub l'a ouvert dans un nouvel onglet : relisez-le, cochez la case de confidentialité, puis envoyez."));
+    var again = el("a", { class: "btn btn-primary", target: "_blank", rel: "noopener" }, "Rouvrir GitHub");
+    var back = el("button", { type: "button", class: "fb-link" }, "Modifier le message");
+    var done = el("button", { type: "button", class: "fb-link" }, "Fermer");
+    var actions = el("div", { class: "fb-ready-actions" });
+    actions.appendChild(again);
+    actions.appendChild(back);
+    actions.appendChild(done);
+    ready.appendChild(actions);
+    ready.appendChild(el("p", { class: "fb-note" }, "Rien ne s'est ouvert ? Votre navigateur a peut-être bloqué la fenêtre : utilisez \"Rouvrir GitHub\"."));
+    back.addEventListener("click", function () { ready.hidden = true; form.hidden = false; submit.focus(); });
+    done.addEventListener("click", function () { d.close(); });
+    function showReady(url) {
+      again.href = url;
+      form.hidden = true;
+      ready.hidden = false;
+      ready.querySelector("#fb-ready-title").focus();
+    }
+
     d.appendChild(form);
+    d.appendChild(ready);
     d.addEventListener("close", function () {
       if (opener && document.contains(opener)) opener.focus();
     });
-    // Click on the backdrop closes the dialog.
-    d.addEventListener("click", function (event) { if (event.target === d) d.close(); });
+    // A click on the backdrop closes the dialog, but not the end of a text
+    // selection dragged out of a field (press inside, release outside).
+    var pressedOnBackdrop = false;
+    d.addEventListener("pointerdown", function (event) { pressedOnBackdrop = event.target === d; });
+    d.addEventListener("click", function (event) {
+      if (event.target === d && pressedOnBackdrop) d.close();
+      pressedOnBackdrop = false;
+    });
     return d;
   }
 
   // Every published version of Projo, newest selected. If the list cannot be
   // read (API limit, offline), the field becomes a plain text field.
-  function fillProjoVersions(select, wrap) {
+  function fillProjoVersions(select, wrap, required) {
     loadReleases().then(function (list) {
       if (!list.length) throw new Error("no release");
       select.textContent = "";
@@ -477,6 +515,7 @@
     }).catch(function () {
       var input = el("input", { type: "text", id: select.id, name: select.name, maxlength: "40", autocomplete: "off", placeholder: "0.24 (370)" });
       input.setAttribute("aria-describedby", select.getAttribute("aria-describedby") || "");
+      if (required) input.required = true;
       if (wrap.contains(select)) wrap.replaceChild(input, select);
     });
   }
@@ -507,7 +546,7 @@
   // - "body": the whole message as Markdown, in the layout GitHub gives to an
   //   issue form answer. GitHub uses it when it shows the plain issue editor
   //   (template not on the default branch yet), so nothing is ever lost.
-  function issueURL(kind, form, conf, device) {
+  function issueURL(kind, form, conf, device, fixedOnly) {
     var params = ["template=" + encodeURIComponent(kind + ".yml")];
     var body = [];
     function add(id, label, value) {
@@ -518,6 +557,7 @@
     conf.fields.forEach(function (f) {
       var input = form.elements[f.id];
       var value = input ? input.value.trim() : "";
+      if (fixedOnly && input && input.tagName !== "SELECT") value = "";
       if (!value) return;
       if (f.id === "title") { add("title", null, conf.prefix + value); return; }
       var label = form.querySelector("label[for='" + input.id + "']").textContent.replace(/ \(facultatif\)$/, "");
