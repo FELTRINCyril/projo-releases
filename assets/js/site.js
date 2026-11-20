@@ -193,7 +193,11 @@
       ]
     }
   };
-  var MAX_URL = 7000; // GitHub answers 414 above its URL limit
+  // Measured on 20/11/2026: a signed-out visitor goes through the login page,
+  // which re-encodes the URL in return_to. Up to 4500 characters it is kept;
+  // from about 5000 GitHub fails (500), then drops return_to and the message
+  // is lost without any error. Signed in, the limit is about 7000.
+  var MAX_URL = 4500;
 
   // What must never reach a public issue. Kept narrow on purpose: mentioning
   // "M3U" in an idea is fine, pasting a playlist link or an address is not.
@@ -280,7 +284,10 @@
       error.hidden = true;
       var url = issueURL(kind, form, conf);
       if (url.length > MAX_URL) {
-        error.textContent = "Le message est trop long pour être transmis à GitHub. Raccourcissez-le d'environ " + Math.ceil((url.length - MAX_URL) / 3) + " caractères.";
+        // Share of the text to remove: the URL grows in proportion to the text
+        // (each field is sent twice, accents take 6 characters once encoded).
+        var excess = Math.min(95, Math.max(5, Math.ceil((url.length - MAX_URL) / url.length * 100 / 5) * 5));
+        error.textContent = "Le message est trop long pour être transmis à GitHub : raccourcissez-le d'environ " + excess + " %.";
         error.hidden = false;
         return;
       }
@@ -316,14 +323,24 @@
     return null;
   }
 
+  // Two ways to carry the message, both in the same URL:
+  // - one query parameter per field id: GitHub fills its issue form with
+  //   them (only once .github/ISSUE_TEMPLATE/ is on the default branch);
+  // - "body": the whole message as Markdown, in the layout GitHub gives to an
+  //   issue form answer. GitHub uses it when it shows the plain issue editor
+  //   (template not on the default branch yet), so nothing is ever lost.
   function issueURL(kind, form, conf) {
     var params = ["template=" + encodeURIComponent(kind + ".yml")];
+    var body = [];
     conf.fields.forEach(function (f) {
       var value = form.elements[f.id].value.trim();
       if (!value) return;
       if (f.id === "title") value = conf.prefix + value;
+      else body.push("### " + f.label.replace(/ \(facultatif\)$/, "") + "\n\n" + value);
       params.push(encodeURIComponent(f.id) + "=" + encodeURIComponent(value));
     });
+    body.push("### Confidentialité\n\n- [x] Je n'ai mis aucun identifiant ni adresse de serveur dans ce message.");
+    params.push("body=" + encodeURIComponent(body.join("\n\n")));
     return "https://github.com/" + REPO + "/issues/new?" + params.join("&");
   }
 
