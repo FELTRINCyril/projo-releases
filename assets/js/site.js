@@ -17,7 +17,7 @@
     var touchMac = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1; // iPadOS
     var text = null;
     if (/iPhone|iPod/.test(ua)) {
-      text = "Projo est une app pour Mac. La version iPhone arrive bientôt.";
+      text = "Vous êtes sur iPhone : Projo pour Mac s'installe depuis un Mac.";
     } else if (/iPad/.test(ua) || touchMac) {
       text = "Projo est une app pour Mac. Ouvrez cette page sur votre Mac pour l'installer.";
     } else if (/Android/.test(ua)) {
@@ -32,6 +32,72 @@
     });
     return true;
   })();
+
+  // ===== Mac or iPhone view ===============================================
+  // index.html holds two views: the Mac app (data-view="mac") and the iPhone
+  // app (data-view="iphone"). The view comes from ?app=mac|iphone, else from
+  // the device: an iPhone opens the iPhone view. The choice is kept in the
+  // address (history.replaceState), so a shared link opens the same view.
+  var views = document.querySelectorAll("[data-view]");
+  var TITLES = {
+    mac: "Projo - Lecteur IPTV pour Mac",
+    iphone: "Projo - Lecteur IPTV pour iPhone"
+  };
+  function viewFromAddress() {
+    var match = /[?&]app=(mac|iphone)\b/.exec(window.location.search);
+    if (match) return match[1];
+    return /iPhone|iPod/.test(navigator.userAgent || "") ? "iphone" : "mac";
+  }
+  var currentView = null;
+  function showView(name, keepAddress) {
+    if (!views.length) return;
+    currentView = name;
+    views.forEach(function (node) { node.hidden = node.getAttribute("data-view") !== name; });
+    document.querySelectorAll(".js-switch [data-app]").forEach(function (opt) {
+      opt.setAttribute("aria-current", String(opt.getAttribute("data-app") === name));
+    });
+    document.querySelectorAll(".nav-links a[data-" + name + "]").forEach(function (link) {
+      link.setAttribute("href", link.getAttribute("data-" + name));
+      var text = link.getAttribute("data-" + name + "-text");
+      if (text) link.textContent = text;
+    });
+    if (TITLES[name]) document.title = TITLES[name];
+    if (!keepAddress && window.history && history.replaceState) {
+      history.replaceState(null, "", window.location.pathname + "?app=" + name);
+    }
+    window.dispatchEvent(new Event("projo-view"));
+  }
+  if (views.length) {
+    showView(viewFromAddress(), true);
+    // The target of #anchor may have been hidden when the browser looked
+    // for it: scroll to it now that its view shows.
+    if (window.location.hash.length > 1) {
+      var target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+      if (target && !target.closest("[hidden]")) target.scrollIntoView();
+    }
+    document.addEventListener("click", function (event) {
+      var link = event.target.closest && event.target.closest("a[data-app]");
+      if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      var name = link.getAttribute("data-app");
+      var inSwitch = !!link.closest(".js-switch");
+      if (name !== currentView) showView(name, false);
+      // From the bottom of the page (or the nav switch once scrolled), the
+      // other view starts at its top.
+      var wrap = document.querySelector(".switch-wrap");
+      var top = wrap ? wrap.getBoundingClientRect().top + window.scrollY : 0;
+      if (!inSwitch || window.scrollY > top) window.scrollTo(0, 0);
+    });
+    // The nav switch shows once the big one has scrolled out of sight.
+    var bigSwitch = document.querySelector(".switch-wrap");
+    if (bigSwitch && "IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        root.classList.toggle("switch-away", !entries[0].isIntersecting);
+      }, { rootMargin: "-52px 0px 0px 0px" }).observe(bigSwitch);
+    } else {
+      root.classList.add("switch-away");
+    }
+  }
 
   // ===== Download button: always the latest DMG ===========================
   // The DMG name changes with every version (Projo-<version>-<build>.dmg), so
@@ -610,24 +676,29 @@
   // while it leaves at the top. CSS scroll-driven animation where supported;
   // elsewhere (Firefox, older Safari) this sets --tilt from 1 to -1.
   var supportsTimeline = window.CSS && CSS.supports && CSS.supports("animation-timeline: view()");
-  var win = document.querySelector(".js-tilt");
-  if (win && !supportsTimeline && !reduce.matches) {
+  // One per view (the Mac window, the iPhone stage); a hidden one is skipped.
+  var tilted = document.querySelectorAll(".js-tilt");
+  if (tilted.length && !supportsTimeline && !reduce.matches) {
     var ticking = false;
     var update = function () {
       ticking = false;
-      var rect = win.getBoundingClientRect();
       var vh = window.innerHeight || 1;
-      // 0 when the window starts to enter, 1 when it has left (same range as
-      // the CSS "cover" range), with a flat plateau between 40 % and 60 %.
-      var p = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height)));
-      var tilt = p < 0.4 ? 1 - p / 0.4 : p > 0.6 ? -(p - 0.6) / 0.4 : 0;
-      win.style.setProperty("--tilt", tilt.toFixed(3));
-      win.style.setProperty("--tilt-abs", Math.abs(tilt).toFixed(3));
+      tilted.forEach(function (win) {
+        var rect = win.getBoundingClientRect();
+        if (!rect.height) return;
+        // 0 when the window starts to enter, 1 when it has left (same range as
+        // the CSS "cover" range), with a flat plateau between 40 % and 60 %.
+        var p = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height)));
+        var tilt = p < 0.4 ? 1 - p / 0.4 : p > 0.6 ? -(p - 0.6) / 0.4 : 0;
+        win.style.setProperty("--tilt", tilt.toFixed(3));
+        win.style.setProperty("--tilt-abs", Math.abs(tilt).toFixed(3));
+      });
     };
     window.addEventListener("scroll", function () {
       if (!ticking) { ticking = true; window.requestAnimationFrame(update); }
     }, { passive: true });
     window.addEventListener("resize", update);
+    window.addEventListener("projo-view", update);
     update();
   }
 })();

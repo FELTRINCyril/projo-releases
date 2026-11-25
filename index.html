@@ -39,16 +39,38 @@
       </a>
       <nav aria-label="Sections">
         <ul class="nav-links">
-          <li><a href="#fonctionnalites">Fonctionnalités</a></li>
-          <li><a href="#installation">Installation</a></li>
-          <li><a href="#questions">Questions</a></li>
+          <li><a href="#fonctionnalites" data-mac="#fonctionnalites" data-iphone="#fonctionnalites-iphone">Fonctionnalités</a></li>
+          <li><a href="#installation" data-mac="#installation" data-iphone="#avec-le-mac" data-mac-text="Installation" data-iphone-text="Avec le Mac">Installation</a></li>
+          <li><a href="#questions" data-mac="#questions" data-iphone="#questions-iphone">Questions</a></li>
         </ul>
       </nav>
-      <a class="nav-cta js-download" href="https://github.com/FELTRINCyril/projo-releases/releases/latest">Télécharger</a>
+      <div class="switch switch-nav js-switch" role="group" aria-label="Choisir l'app">
+        <a class="switch-opt" href="?app=mac" data-app="mac">Mac</a>
+        <a class="switch-opt" href="?app=iphone" data-app="iphone">iPhone</a>
+      </div>
+      <a class="nav-cta js-download" data-view="mac" href="https://github.com/FELTRINCyril/projo-releases/releases/latest">Télécharger</a>
+      <span class="nav-cta nav-soon" data-view="iphone" hidden>Bientôt</span>
     </div>
   </header>
 
   <main id="contenu">
+
+    <!-- ===== CHOIX DE L'APP (Mac ou iPhone) ===== -->
+    <div class="switch-wrap">
+      <div class="switch switch-big js-switch" role="group" aria-label="Choisir l'app">
+        <a class="switch-opt" href="?app=mac" data-app="mac">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.6"/><path d="M2 19h20"/></svg>Mac
+        </a>
+        <a class="switch-opt" href="?app=iphone" data-app="iphone">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>iPhone
+        </a>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- ===== VUE MAC ====================================================== -->
+    <!-- =================================================================== -->
+    <div class="view" data-view="mac">
 
     <!-- ===== HERO ===== -->
     <section class="hero" aria-labelledby="titre-hero">
@@ -275,7 +297,7 @@
         <ul class="soon-list">
           <li>
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>
-            <span><b>Projo sur iPhone</b>Le même catalogue, dans la poche.</span>
+            <span><b>Projo sur iPhone</b>Le même catalogue, dans la poche. <a class="soon-link" href="?app=iphone" data-app="iphone">Découvrir Projo pour iPhone</a></span>
           </li>
         </ul>
       </div>
@@ -383,6 +405,373 @@
         <p class="platform-note js-platform-note" hidden></p>
       </div>
     </section>
+    </div>
+    <!-- ===== FIN DE LA VUE MAC ===== -->
+
+    <!-- =================================================================== -->
+    <!-- ===== VUE IPHONE (structure du site Harvie) ======================== -->
+    <!-- =================================================================== -->
+    <div class="view" data-view="iphone" hidden>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" aria-labelledby="titre-hero-iphone">
+      <img class="hero-icon" src="assets/img/projo-icon.svg" alt="" width="96" height="96">
+      <h1 id="titre-hero-iphone">Votre abonnement IPTV, dans la poche.</h1>
+      <p class="hero-sub">Projo arrive sur iPhone : vos films, vos séries et vos chaînes rangés comme sur votre Mac, à regarder partout, même sans connexion.</p>
+
+      <div class="download">
+        <span class="btn btn-soon">
+          <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+          Bientôt sur iPhone
+        </span>
+        <p class="download-meta">Projo pour iPhone est en test. Il sera proposé ici même, gratuitement.</p>
+        <p class="download-req">iOS 26 - iPhone - Gratuit - <a href="?app=mac" data-app="mac">En attendant, Projo pour Mac</a></p>
+      </div>
+    </section>
+
+    <!-- ===== VISUEL PRINCIPAL (trois iPhone en HTML/CSS, titres fictifs) ===== -->
+    <section class="showcase" aria-label="Aperçu de l'application sur iPhone">
+      <div class="glow" aria-hidden="true"></div>
+      <figure class="stage js-tilt" role="img" aria-label="Trois écrans d'iPhone. À gauche, la fiche d'une série avec ses épisodes. Au centre, l'accueil de Projo : une grande affiche, puis la rangée Reprendre la lecture. À droite, Mon Projo, avec les téléchargements et Ma liste.">
+
+        <!-- Fiche d'une série -->
+        <div class="phone phone-side" aria-hidden="true">
+          <div class="scr">
+            <span class="sb">9:41</span>
+            <div class="pj-art"></div>
+            <div class="pj-body">
+              <p class="pj-kind"><span class="app-mark"></span>Série</p>
+              <p class="pj-title">Les Marées Lentes</p>
+              <p class="pj-meta"><span>2025</span><span>3 saisons</span><span class="pj-hd">HD</span></p>
+              <p class="pj-btn pj-btn-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Lecture</p>
+              <p class="pj-btn pj-btn-grey"><svg viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>Télécharger S1 : É1</p>
+              <p class="pj-desc">Sur une île coupée du monde à chaque marée, une gardienne de phare découvre que les bateaux reviennent, mais jamais les mêmes.</p>
+              <p class="pj-icons"><span><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ma liste</span><span><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg>Suivre</span><span><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Vu</span></p>
+              <p class="pj-eps-head"><b>Épisodes</b><span class="pj-caps">Saison 1</span></p>
+              <div class="pj-ep"><span class="pj-ep-art w1"><i class="pg-62"></i></span><span class="pj-lines"><b>1. Basse mer</b><span>52 min</span></span></div>
+              <div class="pj-ep"><span class="pj-ep-art w3"></span><span class="pj-lines"><b>2. Le phare</b><span>49 min</span></span></div>
+              <div class="pj-ep"><span class="pj-ep-art w4"></span><span class="pj-lines"><b>3. Marée haute</b><span>51 min</span></span></div>
+              <div class="pj-ep"><span class="pj-ep-art w2"></span><span class="pj-lines"><b>4. Les bateaux</b><span>55 min</span></span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accueil -->
+        <div class="phone phone-main" aria-hidden="true">
+          <div class="scr">
+            <span class="sb">9:41</span>
+            <div class="pj-top">
+              <img src="assets/img/projo-wordmark.svg" alt="" width="58" height="24">
+              <span class="pj-top-icons">
+                <svg viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
+                <span class="pj-bell"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg><i>2</i></span>
+              </span>
+            </div>
+            <div class="pj-home">
+            <p class="pj-cats"><span>Films</span><span>Séries</span><span>Catégories</span></p>
+            <div class="pj-feature">
+              <span class="pj-feature-kind"><span class="app-mark"></span>Série</span>
+              <b>Les Marées Lentes</b>
+              <em>Drame - Mystère - Îles</em>
+              <span class="pj-feature-btns"><span class="pj-mini pj-mini-play">Lecture</span><span class="pj-mini">+ Ma liste</span></span>
+            </div>
+            <p class="pj-row-title">Reprendre la lecture</p>
+            <div class="pj-strip">
+              <span class="pj-card p4"><i class="pg-62"></i></span>
+              <span class="pj-card p2"><i class="pg-35"></i></span>
+              <span class="pj-card p1"><i class="pg-80"></i></span>
+            </div>
+            <p class="pj-row-title">Ajoutés récemment</p>
+            <div class="pj-strip">
+              <span class="pj-card p3"></span>
+              <span class="pj-card p6"></span>
+              <span class="pj-card p7"></span>
+            </div>
+            </div>
+            <div class="pj-tabs">
+              <span class="is-on"><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/></svg>Accueil</span>
+              <span><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="m9 3 3 3 3-3"/></svg>TV</span>
+              <span><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>Recherche</span>
+              <span><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 10h.01M15 10h.01M9 14.5c1.6 1.4 4.4 1.4 6 0"/></svg>Mon Projo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mon Projo -->
+        <div class="phone phone-side" aria-hidden="true">
+          <div class="scr">
+            <span class="sb">9:41</span>
+            <div class="pj-page">
+              <p class="pj-page-title">Mon Projo<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg></p>
+              <p class="pj-profile"><span class="pj-avatar">C</span><span class="pj-avatar pj-avatar-2">L</span><span class="pj-avatar pj-avatar-3">+</span></p>
+              <p class="pj-row-title">Téléchargements</p>
+              <div class="pj-strip">
+                <span class="pj-card p2"><span class="pj-ring"><svg viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/><circle class="ring-fg" cx="22" cy="22" r="18" pathLength="100"/></svg></span></span>
+                <span class="pj-card p4"><span class="pj-done"><svg viewBox="0 0 24 24"><path d="m6.5 12.5 3.5 3.5 7.5-8"/></svg></span></span>
+                <span class="pj-card p5"><span class="pj-done"><svg viewBox="0 0 24 24"><path d="m6.5 12.5 3.5 3.5 7.5-8"/></svg></span></span>
+              </div>
+              <p class="pj-row-title">Ma liste<span>Tout voir</span></p>
+              <div class="pj-strip">
+                <span class="pj-card p1"></span>
+                <span class="pj-card p7"></span>
+                <span class="pj-card p3"></span>
+              </div>
+              <p class="pj-row-title">Mes chaînes</p>
+              <div class="pj-channels"><span>Côte Marine</span><span>Studio 9</span><span>Ciné Nuit</span></div>
+              <p class="pj-row-title">Vus récemment</p>
+              <div class="pj-strip">
+                <span class="pj-card p6"></span>
+                <span class="pj-card p3"></span>
+                <span class="pj-card p2"></span>
+              </div>
+            </div>
+            <div class="pj-tabs">
+              <span><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/></svg>Accueil</span>
+              <span><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="m9 3 3 3 3-3"/></svg>TV</span>
+              <span><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>Recherche</span>
+              <span class="is-on"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 10h.01M15 10h.01M9 14.5c1.6 1.4 4.4 1.4 6 0"/></svg>Mon Projo</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+      <p class="showcase-note">Interface simulée. Titres et affiches fictifs.</p>
+    </section>
+
+    <!-- ===== FONCTIONNALITES ===== -->
+    <section class="features" id="fonctionnalites-iphone" aria-labelledby="titre-fonctionnalites-iphone">
+      <div class="section-head">
+        <h2 id="titre-fonctionnalites-iphone"><span class="line">Tout votre catalogue.</span> <span class="line">Partout avec vous.</span></h2>
+        <p>Le même Projo que sur Mac, pensé pour le pouce : quatre onglets, des affiches à faire défiler, et vos titres prêts pour le train ou l'avion.</p>
+      </div>
+
+      <div class="tiles">
+
+        <article class="tile tile-player" data-reveal>
+          <div class="tile-text">
+            <svg class="tile-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m10 9.5 5 2.5-5 2.5z"/></svg>
+            <h3>Le lecteur, au bout des doigts</h3>
+            <p>Touchez deux fois un bord pour reculer ou avancer, gardez le doigt sur la vidéo pour passer en x2, pincez pour remplir l'écran. Pistes audio et sous-titres, passer l'intro, épisode suivant, et le son vers vos écouteurs ou vos enceintes AirPlay.</p>
+          </div>
+          <div class="vis vis-player" aria-hidden="true">
+            <div class="vp-screen">
+              <span class="vp-boost">2x</span>
+              <span class="vp-tap vp-tap-l">- 10 s</span>
+              <span class="vp-skip">Passer l'intro</span>
+              <div class="vp-bar"><i></i></div>
+              <div class="vp-controls">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <span class="vp-time">18:42 / 52:10</span>
+              </div>
+            </div>
+            <div class="vp-chips">
+              <span class="chip chip-on">Maintenir : x2</span>
+              <span class="chip">Double appui : 10 s</span>
+              <span class="chip">Pincer : plein écran</span>
+              <span class="chip">AirPlay</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile" data-reveal>
+          <div class="tile-text">
+            <svg class="tile-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
+            <h3>Hors ligne</h3>
+            <p>Téléchargez films et épisodes. Ils continuent quand vous quittez l'app, en Wi-Fi seulement si vous le voulez, et peuvent s'effacer d'eux-mêmes une fois vus.</p>
+          </div>
+          <div class="vis vis-dl" aria-hidden="true">
+            <div class="dl-item">
+              <svg class="ring" viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/><circle class="ring-fg" cx="22" cy="22" r="18" pathLength="100"/></svg>
+              <div class="dl-lines"><span>Nord Absolu</span><span>S2 : É3 - en arrière-plan</span></div>
+            </div>
+            <div class="dl-item">
+              <svg class="ring ring-done" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18"/><path d="m15 22.5 4.5 4.5 9.5-10"/></svg>
+              <div class="dl-lines"><span>Ligne de Sel</span><span>Prêt à regarder hors ligne</span></div>
+            </div>
+            <div class="dl-item">
+              <svg class="ring ring-wait" viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/><path d="M15 20a10 10 0 0 1 14 0M18 23.5a5.5 5.5 0 0 1 8 0"/><circle class="ring-dot" cx="22" cy="27" r="1.6"/></svg>
+              <div class="dl-lines"><span>Orage d'Été</span><span>En attente du Wi-Fi</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile tile-list" data-reveal>
+          <div class="tile-text">
+            <svg class="tile-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 10h.01M15 10h.01M9 14.5c1.6 1.4 4.4 1.4 6 0"/></svg>
+            <h3>Mon Projo</h3>
+            <p>Vos téléchargements, Reprendre la lecture, Ma liste, vos chaînes et ce que vous avez vu récemment, sur une seule page.</p>
+          </div>
+          <div class="vis vis-progress" aria-hidden="true">
+            <span class="vpr"><span class="vpr-art a1"></span><i class="pg-70"></i></span>
+            <span class="vpr"><span class="vpr-art a2"></span><i class="pg-30"></i></span>
+            <span class="vpr"><span class="vpr-art a3"></span><i class="pg-90"></i></span>
+          </div>
+        </article>
+
+        <article class="tile tile-follow" data-reveal>
+          <div class="tile-text">
+            <svg class="tile-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg>
+            <h3>Séries suivies</h3>
+            <p>Une notification quand de nouveaux épisodes arrivent, et les prochains épisodes téléchargés d'avance si vous le souhaitez.</p>
+          </div>
+          <div class="vis vis-follow" aria-hidden="true">
+            <div class="vf-note">
+              <img src="assets/img/projo-icon.svg" alt="" width="28" height="28" loading="lazy">
+              <p><b>Fréquence Basse</b>2 nouveaux épisodes sont disponibles.</p>
+            </div>
+            <div class="vf-card"><span class="vf-badge">Nouveaux épisodes</span></div>
+          </div>
+        </article>
+
+        <article class="tile tile-search" data-reveal>
+          <div class="tile-text">
+            <svg class="tile-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
+            <h3>Recherche</h3>
+            <p>Films, séries, chaînes et acteurs, au fil de la frappe, avec vos recherches récentes.</p>
+          </div>
+          <div class="vis vis-search" aria-hidden="true">
+            <div class="vs-field"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><span class="vs-typed">marée</span></div>
+            <ul class="vs-results">
+              <li><span class="vs-thumb t1"></span>Les Marées Lentes<em>Série</em></li>
+              <li><span class="vs-thumb t3"></span>Côte Marine<em>Chaîne</em></li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="tile tile-tv" data-reveal>
+          <div class="tile-text">
+            <svg class="tile-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="m9 3 3 3 3-3"/></svg>
+            <h3>Chaînes TV et guide des programmes</h3>
+            <p>L'onglet TV range le direct par catégories, avec ce qui passe maintenant et ensuite. Ajoutez vos chaînes préférées à Mes chaînes.</p>
+          </div>
+          <div class="vis vis-epg" aria-hidden="true">
+            <div class="epg-row"><span class="epg-ch">Côte Marine</span><span class="epg-p is-now ew3">Journal du soir</span><span class="epg-p ew4">Documentaire : les phares</span></div>
+            <div class="epg-row"><span class="epg-ch">Studio 9</span><span class="epg-p is-now ew5">Le grand débat</span><span class="epg-p ew2">Météo</span></div>
+            <div class="epg-row"><span class="epg-ch">Ciné Nuit</span><span class="epg-p is-now ew2">Court</span><span class="epg-p ew5">Les Heures Claires</span></div>
+            <i class="epg-now"></i>
+          </div>
+        </article>
+
+        <article class="tile tile-plain" data-reveal>
+          <svg class="tile-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><circle cx="17" cy="8" r="2.5"/><path d="M16 13.5c2.3 0 4 1.4 4.5 4"/></svg>
+          <h3>Profils</h3>
+          <p>Jusqu'à cinq profils, chacun avec sa liste, sa progression et son image.</p>
+          <div class="vis vis-avatars" aria-hidden="true">
+            <span class="pj-avatar">C</span><span class="pj-avatar pj-avatar-2">L</span><span class="pj-avatar pj-avatar-4">M</span><span class="pj-avatar pj-avatar-3">+</span>
+          </div>
+        </article>
+
+        <article class="tile tile-plain tile-half" data-reveal>
+          <svg class="tile-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-8 6 6 0 0 0-11.6-1.4A4.7 4.7 0 0 0 7 18.5z"/></svg>
+          <h3>Synchronisé avec votre Mac</h3>
+          <p>Ma liste, la reprise de lecture, les séries suivies et les profils passent d'un appareil à l'autre par iCloud. Commencez un épisode sur le Mac, finissez-le dans le train.</p>
+        </article>
+
+        <article class="tile tile-plain tile-half tile-last" data-reveal>
+          <svg class="tile-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/></svg>
+          <h3>Connecté en un instant</h3>
+          <p>Votre abonnement est retrouvé par le Trousseau iCloud, ou transmis depuis votre Mac en scannant un QR code. Rien à retaper.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== AVEC LE MAC (a la place de l'installation : pas encore de .ipa publie) ===== -->
+    <section class="install" id="avec-le-mac" aria-labelledby="titre-avec-le-mac">
+      <div class="section-head">
+        <h2 id="titre-avec-le-mac">Votre Mac et votre iPhone, en phase.</h2>
+        <p>Projo pour iPhone fonctionne seul. Avec Projo sur votre Mac, il démarre en quelques secondes.</p>
+      </div>
+
+      <ol class="steps">
+        <li class="step" data-reveal>
+          <div class="step-vis" aria-hidden="true">
+            <div class="qr-pair">
+              <svg class="qr" viewBox="-2 -2 25 25"><rect x="0" y="0" width="1" height="1"/><rect x="0" y="1" width="1" height="1"/><rect x="0" y="2" width="1" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="0" y="8" width="1" height="1"/><rect x="0" y="9" width="1" height="1"/><rect x="0" y="11" width="1" height="1"/><rect x="0" y="14" width="1" height="1"/><rect x="0" y="15" width="1" height="1"/><rect x="0" y="16" width="1" height="1"/><rect x="0" y="17" width="1" height="1"/><rect x="0" y="18" width="1" height="1"/><rect x="0" y="19" width="1" height="1"/><rect x="0" y="20" width="1" height="1"/><rect x="1" y="0" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="1" y="8" width="1" height="1"/><rect x="1" y="9" width="1" height="1"/><rect x="1" y="11" width="1" height="1"/><rect x="1" y="12" width="1" height="1"/><rect x="1" y="14" width="1" height="1"/><rect x="1" y="20" width="1" height="1"/><rect x="2" y="0" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="2" y="9" width="1" height="1"/><rect x="2" y="10" width="1" height="1"/><rect x="2" y="12" width="1" height="1"/><rect x="2" y="14" width="1" height="1"/><rect x="2" y="16" width="1" height="1"/><rect x="2" y="17" width="1" height="1"/><rect x="2" y="18" width="1" height="1"/><rect x="2" y="20" width="1" height="1"/><rect x="3" y="0" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="3" y="8" width="1" height="1"/><rect x="3" y="12" width="1" height="1"/><rect x="3" y="14" width="1" height="1"/><rect x="3" y="16" width="1" height="1"/><rect x="3" y="17" width="1" height="1"/><rect x="3" y="18" width="1" height="1"/><rect x="3" y="20" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="4" y="11" width="1" height="1"/><rect x="4" y="12" width="1" height="1"/><rect x="4" y="14" width="1" height="1"/><rect x="4" y="16" width="1" height="1"/><rect x="4" y="17" width="1" height="1"/><rect x="4" y="18" width="1" height="1"/><rect x="4" y="20" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="5" y="9" width="1" height="1"/><rect x="5" y="11" width="1" height="1"/><rect x="5" y="14" width="1" height="1"/><rect x="5" y="20" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/><rect x="6" y="9" width="1" height="1"/><rect x="6" y="11" width="1" height="1"/><rect x="6" y="12" width="1" height="1"/><rect x="6" y="14" width="1" height="1"/><rect x="6" y="15" width="1" height="1"/><rect x="6" y="16" width="1" height="1"/><rect x="6" y="17" width="1" height="1"/><rect x="6" y="18" width="1" height="1"/><rect x="6" y="19" width="1" height="1"/><rect x="6" y="20" width="1" height="1"/><rect x="7" y="8" width="1" height="1"/><rect x="7" y="10" width="1" height="1"/><rect x="7" y="11" width="1" height="1"/><rect x="8" y="0" width="1" height="1"/><rect x="8" y="1" width="1" height="1"/><rect x="8" y="4" width="1" height="1"/><rect x="8" y="9" width="1" height="1"/><rect x="8" y="11" width="1" height="1"/><rect x="8" y="12" width="1" height="1"/><rect x="8" y="14" width="1" height="1"/><rect x="8" y="16" width="1" height="1"/><rect x="9" y="0" width="1" height="1"/><rect x="9" y="4" width="1" height="1"/><rect x="9" y="7" width="1" height="1"/><rect x="9" y="9" width="1" height="1"/><rect x="9" y="14" width="1" height="1"/><rect x="9" y="15" width="1" height="1"/><rect x="9" y="17" width="1" height="1"/><rect x="9" y="18" width="1" height="1"/><rect x="9" y="19" width="1" height="1"/><rect x="9" y="20" width="1" height="1"/><rect x="10" y="0" width="1" height="1"/><rect x="10" y="2" width="1" height="1"/><rect x="10" y="3" width="1" height="1"/><rect x="10" y="4" width="1" height="1"/><rect x="10" y="6" width="1" height="1"/><rect x="10" y="7" width="1" height="1"/><rect x="10" y="12" width="1" height="1"/><rect x="10" y="13" width="1" height="1"/><rect x="10" y="14" width="1" height="1"/><rect x="10" y="17" width="1" height="1"/><rect x="10" y="18" width="1" height="1"/><rect x="10" y="19" width="1" height="1"/><rect x="10" y="20" width="1" height="1"/><rect x="11" y="2" width="1" height="1"/><rect x="11" y="3" width="1" height="1"/><rect x="11" y="4" width="1" height="1"/><rect x="11" y="5" width="1" height="1"/><rect x="11" y="12" width="1" height="1"/><rect x="11" y="17" width="1" height="1"/><rect x="11" y="18" width="1" height="1"/><rect x="11" y="19" width="1" height="1"/><rect x="12" y="0" width="1" height="1"/><rect x="12" y="1" width="1" height="1"/><rect x="12" y="2" width="1" height="1"/><rect x="12" y="3" width="1" height="1"/><rect x="12" y="4" width="1" height="1"/><rect x="12" y="5" width="1" height="1"/><rect x="12" y="6" width="1" height="1"/><rect x="12" y="7" width="1" height="1"/><rect x="12" y="8" width="1" height="1"/><rect x="12" y="9" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/><rect x="12" y="13" width="1" height="1"/><rect x="12" y="14" width="1" height="1"/><rect x="12" y="15" width="1" height="1"/><rect x="12" y="16" width="1" height="1"/><rect x="12" y="17" width="1" height="1"/><rect x="12" y="20" width="1" height="1"/><rect x="13" y="9" width="1" height="1"/><rect x="13" y="10" width="1" height="1"/><rect x="13" y="11" width="1" height="1"/><rect x="13" y="12" width="1" height="1"/><rect x="13" y="14" width="1" height="1"/><rect x="13" y="15" width="1" height="1"/><rect x="13" y="18" width="1" height="1"/><rect x="13" y="20" width="1" height="1"/><rect x="14" y="0" width="1" height="1"/><rect x="14" y="1" width="1" height="1"/><rect x="14" y="2" width="1" height="1"/><rect x="14" y="3" width="1" height="1"/><rect x="14" y="4" width="1" height="1"/><rect x="14" y="5" width="1" height="1"/><rect x="14" y="6" width="1" height="1"/><rect x="14" y="12" width="1" height="1"/><rect x="14" y="13" width="1" height="1"/><rect x="14" y="14" width="1" height="1"/><rect x="14" y="18" width="1" height="1"/><rect x="14" y="19" width="1" height="1"/><rect x="15" y="0" width="1" height="1"/><rect x="15" y="6" width="1" height="1"/><rect x="15" y="13" width="1" height="1"/><rect x="15" y="15" width="1" height="1"/><rect x="15" y="16" width="1" height="1"/><rect x="15" y="17" width="1" height="1"/><rect x="15" y="18" width="1" height="1"/><rect x="15" y="19" width="1" height="1"/><rect x="16" y="0" width="1" height="1"/><rect x="16" y="2" width="1" height="1"/><rect x="16" y="3" width="1" height="1"/><rect x="16" y="4" width="1" height="1"/><rect x="16" y="6" width="1" height="1"/><rect x="16" y="9" width="1" height="1"/><rect x="16" y="13" width="1" height="1"/><rect x="16" y="14" width="1" height="1"/><rect x="16" y="15" width="1" height="1"/><rect x="16" y="16" width="1" height="1"/><rect x="16" y="17" width="1" height="1"/><rect x="17" y="0" width="1" height="1"/><rect x="17" y="2" width="1" height="1"/><rect x="17" y="3" width="1" height="1"/><rect x="17" y="4" width="1" height="1"/><rect x="17" y="6" width="1" height="1"/><rect x="17" y="8" width="1" height="1"/><rect x="17" y="11" width="1" height="1"/><rect x="17" y="16" width="1" height="1"/><rect x="17" y="17" width="1" height="1"/><rect x="17" y="19" width="1" height="1"/><rect x="18" y="0" width="1" height="1"/><rect x="18" y="2" width="1" height="1"/><rect x="18" y="3" width="1" height="1"/><rect x="18" y="4" width="1" height="1"/><rect x="18" y="6" width="1" height="1"/><rect x="18" y="9" width="1" height="1"/><rect x="18" y="10" width="1" height="1"/><rect x="18" y="13" width="1" height="1"/><rect x="18" y="14" width="1" height="1"/><rect x="18" y="15" width="1" height="1"/><rect x="18" y="18" width="1" height="1"/><rect x="19" y="0" width="1" height="1"/><rect x="19" y="6" width="1" height="1"/><rect x="19" y="9" width="1" height="1"/><rect x="19" y="11" width="1" height="1"/><rect x="19" y="12" width="1" height="1"/><rect x="19" y="17" width="1" height="1"/><rect x="19" y="20" width="1" height="1"/><rect x="20" y="0" width="1" height="1"/><rect x="20" y="1" width="1" height="1"/><rect x="20" y="2" width="1" height="1"/><rect x="20" y="3" width="1" height="1"/><rect x="20" y="4" width="1" height="1"/><rect x="20" y="5" width="1" height="1"/><rect x="20" y="6" width="1" height="1"/><rect x="20" y="8" width="1" height="1"/><rect x="20" y="9" width="1" height="1"/><rect x="20" y="10" width="1" height="1"/><rect x="20" y="12" width="1" height="1"/><rect x="20" y="13" width="1" height="1"/><rect x="20" y="14" width="1" height="1"/><rect x="20" y="16" width="1" height="1"/><rect x="20" y="17" width="1" height="1"/><rect x="20" y="20" width="1" height="1"/></svg>
+              <svg viewBox="0 0 60 20" class="drag-arrow"><path d="M2 10h52m0 0-7-7m7 7-7 7"/></svg>
+              <span class="qr-phone"><i></i></span>
+            </div>
+          </div>
+          <h3><span class="step-n" aria-hidden="true">1</span>Scannez</h3>
+          <p>Sur le Mac, "Connecter un autre appareil" affiche un QR code : l'iPhone le scanne et reçoit votre abonnement.</p>
+        </li>
+        <li class="step" data-reveal>
+          <div class="step-vis" aria-hidden="true">
+            <div class="dialog">
+              <img src="assets/img/projo-icon.svg" alt="" width="34" height="34" loading="lazy">
+              <p>Activer la synchronisation <span class="nw">iCloud ?</span></p>
+              <span class="dialog-btns"><span>Plus tard</span><span class="is-default">Activer</span></span>
+            </div>
+          </div>
+          <h3><span class="step-n" aria-hidden="true">2</span>Synchronisez</h3>
+          <p>Projo propose la synchronisation iCloud dès la première connexion. Un geste, et c'est réglé.</p>
+        </li>
+        <li class="step" data-reveal>
+          <div class="step-vis" aria-hidden="true">
+            <div class="resume">
+              <span class="wide w1"><b>Fréquence Basse</b><em>S1 : É4</em><i class="pg-62"></i></span>
+            </div>
+          </div>
+          <h3><span class="step-n" aria-hidden="true">3</span>Reprenez</h3>
+          <p>Votre liste, vos profils et l'épisode en cours vous attendent, sur l'un comme sur l'autre.</p>
+        </li>
+      </ol>
+
+      <p class="install-after">Projo pour iPhone n'est pas encore proposé au téléchargement. Dès qu'il le sera, la marche à suivre sera ici, sur cette page.</p>
+    </section>
+
+    <!-- ===== QUESTIONS ===== -->
+    <section class="faq" id="questions-iphone" aria-labelledby="titre-questions-iphone">
+      <div class="section-head">
+        <h2 id="titre-questions-iphone">Questions fréquentes</h2>
+      </div>
+
+      <div class="accordion">
+        <div class="qa">
+          <h3><button type="button" aria-expanded="true" aria-controls="ri1" id="qi1"><span class="qa-q">Quand pourrai-je <span class="nw">l'installer ?</span></span><span class="qa-sign" aria-hidden="true"></span></button></h3>
+          <div class="qa-body" id="ri1" role="region" aria-labelledby="qi1">
+            <p>Projo pour iPhone est terminé et en test. Il n'est pas sur l'App Store : il sera proposé ici, gratuitement, avec la marche à suivre pour l'installer.</p>
+          </div>
+        </div>
+        <div class="qa">
+          <h3><button type="button" aria-expanded="true" aria-controls="ri2" id="qi2"><span class="qa-q">Faut-il un <span class="nw">Mac ?</span></span><span class="qa-sign" aria-hidden="true"></span></button></h3>
+          <div class="qa-body" id="ri2" role="region" aria-labelledby="qi2">
+            <p>Non. Projo pour iPhone s'utilise seul : vous saisissez votre abonnement au premier lancement. Avec un Mac, vous pouvez en plus transmettre l'abonnement par QR code et synchroniser votre bibliothèque.</p>
+          </div>
+        </div>
+        <div class="qa">
+          <h3><button type="button" aria-expanded="true" aria-controls="ri3" id="qi3"><span class="qa-q">Faut-il un <span class="nw">abonnement ?</span></span><span class="qa-sign" aria-hidden="true"></span></button></h3>
+          <div class="qa-body" id="ri3" role="region" aria-labelledby="qi3">
+            <p>Oui : un abonnement Xtream Codes que vous possédez déjà. Projo est seulement le lecteur. Il ne fournit, ne vend et n'héberge aucun contenu ni aucune chaîne.</p>
+          </div>
+        </div>
+        <div class="qa">
+          <h3><button type="button" aria-expanded="true" aria-controls="ri4" id="qi4"><span class="qa-q">Mes données sont-elles envoyées quelque <span class="nw">part ?</span></span><span class="qa-sign" aria-hidden="true"></span></button></h3>
+          <div class="qa-body" id="ri4" role="region" aria-labelledby="qi4">
+            <p>Rien n'est envoyé au développeur de Projo : pas de compte Projo, pas de publicité, pas de mesure d'audience. Votre mot de passe reste dans le Trousseau de votre iPhone. Si vous activez la synchronisation, votre bibliothèque passe par votre propre compte iCloud, que personne d'autre ne voit.</p>
+          </div>
+        </div>
+        <div class="qa">
+          <h3><button type="button" aria-expanded="true" aria-controls="ri5" id="qi5"><span class="qa-q">Sur quel <span class="nw">iPhone ?</span></span><span class="qa-sign" aria-hidden="true"></span></button></h3>
+          <div class="qa-body" id="ri5" role="region" aria-labelledby="qi5">
+            <p>Un iPhone sous iOS 26 ou plus récent.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== APPEL FINAL ===== -->
+    <section class="final" aria-labelledby="titre-final-iphone">
+      <img src="assets/img/projo-icon.svg" alt="" width="72" height="72" loading="lazy">
+      <h2 id="titre-final-iphone">La séance, partout où vous <span class="nw">allez.</span></h2>
+      <div class="download">
+        <span class="btn btn-soon">
+          <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+          Bientôt sur iPhone
+        </span>
+        <p class="download-req"><a href="?app=mac" data-app="mac">En attendant, Projo pour Mac</a></p>
+      </div>
+    </section>
+    </div>
+    <!-- ===== FIN DE LA VUE IPHONE ===== -->
   </main>
 
   <!-- ===== PIED DE PAGE ===== -->
